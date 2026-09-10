@@ -39,6 +39,15 @@ Pastikan Git sudah terinstal, lalu jalankan perintah ini di terminal:
       "translated": "Good Night"
     }
 
+
+## Atau coba di PowerShell
+
+Invoke-RestMethod -Uri "https://ngappidtranslate-go-api.vercel.app/api/translate" `
+  -Method Post `
+  -Headers @{"Content-Type"="application/json"} `
+  -Body '{"text": "Halo dunia, Vercel sudah aman", "source": "id", "target": "en"}'
+
+
 ## 🌐 Cara Deploy ke Vercel
 
 Cukup push repository ini ke GitHub, lalu import ke dashboard Vercel. Vercel akan otomatis mendeteksi folder api/ dan meng-compile file Go ini menjadi endpoint Serverless secara instan. Tidak perlu setting vercel.json!
