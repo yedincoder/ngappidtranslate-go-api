@@ -8,7 +8,6 @@ import (
 	"net/url"
 )
 
-// Struktur data tetap sama kayak punya lu
 type TranslateRequest struct {
 	Text   string `json:"text"`
 	Source string `json:"source"`
@@ -21,26 +20,21 @@ type MyMemoryResponse struct {
 	} `json:"responseData"`
 }
 
-// Handler ini yang bakal dieksekusi Vercel
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Set CORS manual biar React lu bisa nembak API ini
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	// Kalau method OPTIONS (Preflight CORS), langsung OK
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	// Cuma terima POST
 	if r.Method != "POST" {
 		http.Error(w, `{"error": "Method not allowed"}`, http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Parse Body Request
 	var req TranslateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, `{"error": "Format request salah"}`, http.StatusBadRequest)
@@ -48,8 +42,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	safeText := url.QueryEscape(req.Text)
-
-	// API Gratisan (MyMemory)
 	apiURL := fmt.Sprintf("https://api.mymemory.translated.net/get?q=%s&langpair=%s|%s", safeText, req.Source, req.Target)
 
 	resp, err := http.Get(apiURL)
@@ -67,7 +59,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Kirim Response Balik
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"original":   req.Text,
